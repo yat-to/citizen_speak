@@ -1,65 +1,120 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
+
+import { Home, Bell, Settings, MessageCircleMore } from 'lucide-react';
+
+export default function page() {
+    return (
+        <div>
+            <Header />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+    )
+}
+
+
+function Header() {
+    const [openDropdown, setOpenDropdown] = useState(null);
+    const containerRef = useRef(null);
+    const toggleDropdown = (name) => {
+        setOpenDropdown(openDropdown === name ? null : name);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            // Jika klik terjadi di luar containerRef, tutup dropdown
+            if (containerRef.current && !containerRef.current.contains(event.target)) {
+                setOpenDropdown(null);
+            }
+        };
+
+        // Tambah event listener saat komponen muncul
+        document.addEventListener("mousedown", handleClickOutside);
+
+        // Bersihkan event listener saat komponen hilang (cleanup)
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+    return (
+        <header className="bg-[#F4F4F4] border-b border-gray-200 sticky top-0 z-50">
+            <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <Image
+                        src="/images/icon.png"
+                        alt="Logo Aplikasi"
+                        width={50}
+                        height={50}
+                    />
+                </div>
+                <nav className="hidden md:flex items-center gap-8">
+                    <a href="#" className="px-4 py-2">
+                        <Home size={20} className="text-blue-500" />
+                    </a>
+                    <a href="#" className="px-4 py-2">
+                        <Home size={20} className="text-blue-500" />
+                    </a>
+                    <a href="#" className="px-4 py-2">
+                        <Home size={20} className="text-blue-500" />
+                    </a>
+                    <a href="#" className="px-4 py-2">
+                        <Home size={20} className="text-blue-500" />
+                    </a>
+                </nav>
+                {/* // Kita bungkus semua dengan ref ini */}
+                <div className="flex items-center gap-2" ref={containerRef}>
+                    {/* Pesan */}
+                    <div className="relative">
+                        <div
+                            onClick={() => toggleDropdown('message')}
+                            className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
+                        >
+                            <MessageCircleMore size={20} />
+                        </div>
+
+                        {openDropdown === 'message' && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-2 text-sm text-gray-700">
+                                <div className="p-2 hover:bg-gray-50 rounded cursor-pointer">Pesan Baru</div>
+                                <div className="p-2 hover:bg-gray-50 rounded cursor-pointer">Lihat Semua</div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Notifikasi */}
+                    <div className="relative">
+                        <button
+                            onClick={() => toggleDropdown('bell')}
+                            className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors"
+                        >
+                            <Bell size={20} />
+                        </button>
+                        {openDropdown === 'bell' && (
+                            <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-xl z-50 p-4">
+                                <p className="text-sm text-center text-gray-400">Belum ada notifikasi</p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Settings */}
+                    <div className="relative">
+                        <button
+                            onClick={() => toggleDropdown('settings')}
+                            className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors"
+                        >
+                            <Settings size={20} />
+                        </button>
+                        {openDropdown === 'settings' && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50 p-2">
+                                <button className="w-full text-left p-2 hover:bg-gray-50 rounded text-sm">Account Settings</button>
+                                <button className="w-full text-left p-2 hover:bg-red-50 text-red-500 rounded text-sm">Logout</button>
+                            </div>
+                        )}
+                    </div>
+
+                </div>
+            </div>
+        </header>
+    )
 }
